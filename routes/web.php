@@ -2,13 +2,18 @@
 
 use App\Http\Controllers\Auth\AccessoriesController;
 use App\Http\Controllers\Auth\AssetController;
+use App\Http\Controllers\Auth\CategoryController;
 use App\Http\Controllers\Auth\CompanyController;
 use App\Http\Controllers\Auth\ComponentController;
 use App\Http\Controllers\Auth\DashboardController;
 use App\Http\Controllers\Auth\DepartmentController;
 use App\Http\Controllers\Auth\DepreciationController;
 use App\Http\Controllers\Auth\DowntimeController;
+use App\Http\Controllers\Auth\FieldController;
+use App\Http\Controllers\Auth\FieldsetController;
 use App\Http\Controllers\Auth\LicenseController;
+use App\Http\Controllers\Auth\ManufactureController;
+use App\Http\Controllers\Auth\ModelDeviceController;
 use App\Http\Controllers\Auth\SectionController;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\ProfileController;
@@ -48,6 +53,11 @@ Route::prefix('auth')->middleware('auth')->name('auth.')->group(function() {
     Route::resource('/components', ComponentController::class);
     Route::resource('/downtime', DowntimeController::class);
     Route::resource('/user', UserController::class);
+    Route::resource('/model-device', ModelDeviceController::class);
+    Route::resource('/field', FieldController::class);
+    Route::resource('/fieldset', FieldsetController::class);
+    Route::resource('/category', CategoryController::class);
+    Route::resource('/manufacture', ManufactureController::class);
     Route::resource('/company', CompanyController::class);
     Route::resource('/department', DepartmentController::class);
     Route::resource('/section', SectionController::class);

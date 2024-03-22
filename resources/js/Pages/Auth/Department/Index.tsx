@@ -1,6 +1,7 @@
 import ButtonActionTable from "@/Components/ButtonActionTable";
 import FilteredTable from "@/Components/FilteredTable";
 import Header from "@/Components/Header";
+import Loading from "@/Components/Loading";
 import { Toast } from "@/Components/Toast";
 import Guest from "@/Layouts/GuestLayout";
 import { PageProps } from "@/types";
@@ -35,6 +36,7 @@ interface IndexProps {
  
 export default function Index({departments,flashMessage}: IndexProps) {
     const [searchText, setSearchText] = useState<string>('');
+    const [loading, setLoading] = useState<Boolean>(true);
 
     const handleSearchChange = (newSearchText: string) => {
         setSearchText(newSearchText);
@@ -82,6 +84,13 @@ export default function Index({departments,flashMessage}: IndexProps) {
         }
     }, [flashMessage]);    
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 800);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <Guest>
             <Header label="Departments" url="auth.department.create">
@@ -93,14 +102,18 @@ export default function Index({departments,flashMessage}: IndexProps) {
             <div className="flex gap-5">
                 <div className="rounded-md border bg-white p-3 w-full">
                     <FilteredTable urlRefresh="auth.department.index" onSearchChange={handleSearchChange} />            
-                    <DataTable
-                        columns={columns}
-                        data={filteredData}
-                        striped
-                        dense
-                        highlightOnHover
-                        pagination
-                    />
+                    {loading ? (
+                        <Loading/>
+                    ):(
+                        <DataTable
+                            columns={columns}
+                            data={filteredData}
+                            striped
+                            dense
+                            highlightOnHover
+                            pagination
+                        />
+                    )}
                 </div>
             </div>
         </Guest>

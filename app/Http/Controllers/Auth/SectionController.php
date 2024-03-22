@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Department;
 use App\Models\Section;
+use App\Models\UserLog;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -47,7 +48,15 @@ class SectionController extends Controller
             'name' => 'required|string'
         ]);
 
-        Section::create($data);
+        $section = Section::create($data);
+
+        UserLog::create([
+            'activity_type' => 'Created',
+            'description' => 'Created Section',
+            'data_id' => $section->id,
+            'data_type' => Section::class,
+        ]);
+
         return redirect()->route('auth.section.index')->with([
             'type' => 'success',
             'message' => 'Successfully Created'
@@ -90,6 +99,14 @@ class SectionController extends Controller
         ]);
 
         $section->update($data);
+
+        UserLog::create([
+            'activity_type' => 'Updated',
+            'description' => 'Updated Section',
+            'data_id' => $section->id,
+            'data_type' => Section::class,
+        ]);
+
         return redirect()->route('auth.section.index')->with([
             'type' => 'success',
             'message' => 'Successfully Updated'
@@ -102,6 +119,14 @@ class SectionController extends Controller
     public function destroy(Section $section)
     {
         $section->delete();
+
+        UserLog::create([
+            'activity_type' => 'Deleted',
+            'description' => 'Deleted Section',
+            'data_id' => $section->id,
+            'data_type' => Section::class,
+        ]);
+
         return redirect()->route('auth.section.index')->with([
             'type' => 'success',
             'message' => 'Successfully Deleted'

@@ -19,8 +19,6 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('notes')->nullable();
             $table->string('url')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
             $table->index('name');

@@ -14,7 +14,6 @@ class Company extends Model
 
     protected $fillable = [
         'name',
-        'user_id',
     ];
 
     /**
@@ -25,14 +24,5 @@ class Company extends Model
     public function departments(): HasMany
     {
         return $this->hasMany(Department::class);
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($company) {
-            $company->user_id = Auth::id();
-        });
     }
 }

@@ -1,6 +1,7 @@
 import ButtonActionTable from "@/Components/ButtonActionTable";
 import FilteredTable from "@/Components/FilteredTable";
 import Header from "@/Components/Header";
+import Loading from "@/Components/Loading";
 import { Toast } from "@/Components/Toast";
 import Guest from "@/Layouts/GuestLayout";
 import { useEffect, useState } from "react";
@@ -26,6 +27,7 @@ interface IndexProps {
  
 export default function Index({companies,flashMessage}: IndexProps) {
     const [searchText, setSearchText] = useState<string>('');
+    const [loading, setLoading] = useState<Boolean>(true);
 
     const handleSearchChange = (newSearchText: string) => {
         setSearchText(newSearchText);
@@ -62,7 +64,14 @@ export default function Index({companies,flashMessage}: IndexProps) {
                 title: flashMessage.message,
             }).fire();
         }
-    }, [flashMessage]);    
+    }, [flashMessage]);  
+    
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 800);
+        return () => clearTimeout(timer);
+    }, []);
 
     return (
         <Guest>
@@ -75,14 +84,18 @@ export default function Index({companies,flashMessage}: IndexProps) {
             <div className="flex gap-5">
                 <div className="rounded-md border bg-white p-3 w-3/4">
                     <FilteredTable urlRefresh="auth.company.index" onSearchChange={handleSearchChange} />            
-                    <DataTable
-                        columns={columns}
-                        data={filteredData}
-                        striped
-                        dense
-                        highlightOnHover
-                        pagination
-                    />
+                    {loading ? (
+                        <Loading/>
+                    ):(
+                        <DataTable
+                            columns={columns}
+                            data={filteredData}
+                            striped
+                            dense
+                            highlightOnHover
+                            pagination
+                        />
+                    )}
                 </div>
                 <div className="w-1/4">
                     <h1 className="text-gray-800 text-lg font-semibold">About Companies</h1>

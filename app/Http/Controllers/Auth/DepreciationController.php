@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Depreciation;
+use App\Models\UserLog;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -39,7 +40,15 @@ class DepreciationController extends Controller
             'months' => 'required|integer',
         ]);
 
-        Depreciation::create($data);
+        $depreciation = Depreciation::create($data);
+
+        UserLog::create([
+            'activity_type' => 'Created',
+            'description' => 'Created Depreciation',
+            'data_id' => $depreciation->id,
+            'data_type' => Depreciation::class,
+        ]);
+    
         return redirect()->route('auth.depreciation.index')->with([
             'message' => 'Successfully Created',
             'type' => 'success'
@@ -75,10 +84,19 @@ class DepreciationController extends Controller
         ]);
 
         $depreciation->update($data);
+        UserLog::create([
+            'activity_type' => 'Updated',
+            'description' => 'Updated Depreciation',
+            'data_id' => $depreciation->id,
+            'data_type' => Depreciation::class,
+        ]);
+
         return redirect()->route('auth.depreciation.index')->with([
             'message' => 'Successfully Updated',
             'type' => 'success'
         ]);
+
+       
     }
 
     /**
@@ -87,6 +105,12 @@ class DepreciationController extends Controller
     public function destroy(Depreciation $depreciation)
     {
         $depreciation->delete();
+        UserLog::create([
+            'activity_type' => 'Deleted',
+            'description' => 'Deleted Depreciation',
+            'data_id' => $depreciation->id,
+            'data_type' => Depreciation::class,
+        ]);
 
         return redirect()->route('auth.depreciation.index')->with([
             'message' => 'Successfully Deleted',

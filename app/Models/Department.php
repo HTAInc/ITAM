@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Auth;
 
 class Department extends Model
 {
@@ -16,7 +15,6 @@ class Department extends Model
         'name',
         'code',
         'company_id',
-        'user_id',
     ];
 
     /**
@@ -27,14 +25,5 @@ class Department extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($department) {
-            $department->user_id = Auth::id();
-        });
     }
 }

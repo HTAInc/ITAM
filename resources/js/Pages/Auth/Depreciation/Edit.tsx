@@ -20,7 +20,7 @@ interface EditProps extends PageProps {
 }
 
 export default function Edit({depreciation}: EditProps) {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, put, processing, errors, reset } = useForm({
         name: depreciation.name,
         months: depreciation.months.toString(),
     });
@@ -35,10 +35,7 @@ export default function Edit({depreciation}: EditProps) {
             confirmButtonText:'Save',
         }).then((result) => {
             if (result.isConfirmed) {
-                router.post(route("auth.depreciation.update", depreciation.id), {
-                    _method: "PUT",
-                    ...data,
-                });
+                put(route("auth.depreciation.update", depreciation.id));
             }
         });
     };

@@ -1,12 +1,16 @@
 import ButtonActionTable from "@/Components/ButtonActionTable";
 import FilteredTable from "@/Components/FilteredTable";
 import Header from "@/Components/Header";
+import Loading from "@/Components/Loading";
 import { Toast } from "@/Components/Toast";
 import Guest from "@/Layouts/GuestLayout";
 import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
+import { BsMouse2 } from "react-icons/bs";
+import { GrLicense } from "react-icons/gr";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { IoAdd, IoTrashOutline } from "react-icons/io5";
+import { RiBarcodeFill } from "react-icons/ri";
 import { SweetAlertIcon } from "sweetalert2";
 
 interface CompanyProps {
@@ -26,11 +30,25 @@ interface SectionProps {
     department: DepartmentProps;
 }
 
+interface RoleProps {
+    id: number;
+    name: string;
+    guard_name: string;
+    created_at: string;
+    updated_at: string;
+    pivot: {
+      model_type: string;
+      model_id: number;
+      role_id: number;
+    };
+  }
+
 interface UserProps {
     id: number;
     name: string;
-    code: string;
+    email: string;
     section: SectionProps;
+    roles: RoleProps[];
 }
 
 interface FlashMessageProps {
@@ -48,6 +66,7 @@ interface IndexProps {
  
 export default function Index({users,flashMessage}: IndexProps) {
     const [searchText, setSearchText] = useState<string>('');
+    const [loading, setLoading] = useState<Boolean>(true);
 
     const handleSearchChange = (newSearchText: string) => {
         setSearchText(newSearchText);
@@ -55,21 +74,67 @@ export default function Index({users,flashMessage}: IndexProps) {
 
     const filteredData = users.filter((row) =>
         row.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        row.email.toLowerCase().includes(searchText.toLowerCase()) ||
+        row.section.department.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        row.section.department.company.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        row.roles[0].name.toLowerCase().includes(searchText.toLowerCase()) ||
         row.section.name.toLowerCase().includes(searchText.toLowerCase())
     );
 
     const columns = [
         {
-            name: 'Company Name',
+            name: 'Name',
             selector: (row: UserProps) => row.name,
+            sortable: true,
         },
         {
-            name: 'Company Name',
+            name: 'Email',
+            selector: (row: UserProps) => row.email,
+            sortable: true,
+        },
+        {
+            name: 'Role',
+            selector: (row: UserProps) => row.roles[0].name,
+            sortable: true,
+        },
+        {
+            name: 'Company',
             selector: (row: UserProps) => row.section.department.company.name,
+            sortable: true,
+        },
+        {
+            name: 'Department',
+            selector: (row: UserProps) => row.section.department.name,
+            sortable: true,
         },
         {
             name: 'Section',
             selector: (row: UserProps) => row.section.name,
+            sortable: true,
+        },
+        {
+            name: (
+                <RiBarcodeFill className="h-4 w-4"/>
+            ),
+            center:true,
+            width:'60px',
+            selector: (row: UserProps) => 150,
+        },
+        {
+            name: (
+                <GrLicense className="h-4 w-4"/>
+            ),
+            center:true,
+            width:'60px',
+            selector: (row: UserProps) => 150,
+        },
+        {
+            name: (
+                <BsMouse2 className="h-4 w-4"/>
+            ),
+            center:true,
+            width:'60px',
+            selector: (row: UserProps) => 150,
         },
         {
             name: 'Actions',
@@ -93,10 +158,18 @@ export default function Index({users,flashMessage}: IndexProps) {
                 title: flashMessage.message,
             }).fire();
         }
-    }, [flashMessage]);    
+    }, [flashMessage]);  
+    
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 800);
+        return () => clearTimeout(timer);
+    }, []);
 
     return (
         <Guest>
+            
             <Header label="Users" url="auth.user.create">
                 <div className="inline-flex items-center">
                     <IoAdd/>
@@ -105,15 +178,19 @@ export default function Index({users,flashMessage}: IndexProps) {
             </Header>
             <div className="flex gap-5">
                 <div className="rounded-md border bg-white p-3 w-full">
-                    <FilteredTable urlRefresh="auth.department.index" onSearchChange={handleSearchChange} />            
-                    <DataTable
-                        columns={columns}
-                        data={filteredData}
-                        striped
-                        dense
-                        highlightOnHover
-                        pagination
-                    />
+                    <FilteredTable urlRefresh="auth.user.index" onSearchChange={handleSearchChange} />            
+                    {loading ? (
+                        <Loading/>
+                    ):(
+                        <DataTable
+                            columns={columns}
+                            data={filteredData}
+                            striped
+                            dense
+                            highlightOnHover
+                            pagination
+                        />
+                    )}
                 </div>
             </div>
         </Guest>

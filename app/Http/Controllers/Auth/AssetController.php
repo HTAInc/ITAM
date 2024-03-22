@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Asset;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class AssetController extends Controller
 {
@@ -12,7 +14,11 @@ class AssetController extends Controller
      */
     public function index()
     {
-        //
+        $assets = Asset::all();
+
+        return Inertia::render('Auth/Asset/Index',[
+            'assets' => $assets
+        ]);
     }
 
     /**

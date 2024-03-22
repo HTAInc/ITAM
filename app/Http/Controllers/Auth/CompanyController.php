@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\UserLog;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -37,7 +38,14 @@ class CompanyController extends Controller
             'name' => 'required|string|unique:companies'
         ]);
 
-        Company::create($data);
+        $company = Company::create($data);
+
+        UserLog::create([
+            'activity_type' => 'Created',
+            'description' => 'Created Company',
+            'data_id' => $company->id,
+            'data_type' => Company::class,
+        ]);
         return redirect()->route('auth.company.index')->with([
             'type' => 'success',
             'message' => 'Successfully Created'
@@ -72,6 +80,14 @@ class CompanyController extends Controller
         ]);
 
         $company->update($data);
+
+        UserLog::create([
+            'activity_type' => 'Updated',
+            'description' => 'Updated Company',
+            'data_id' => $company->id,
+            'data_type' => Company::class,
+        ]);
+
         return redirect()->route('auth.company.index')->with([
             'type' => 'success',
             'message' => 'Successfully Updated'
@@ -84,6 +100,13 @@ class CompanyController extends Controller
     public function destroy(Company $company)
     {
         $company->delete();
+
+        UserLog::create([
+            'activity_type' => 'Deleted',
+            'description' => 'Deleted Company',
+            'data_id' => $company->id,
+            'data_type' => Company::class,
+        ]);
 
         return redirect()->route('auth.company.index')->with([
             'type' => 'success',

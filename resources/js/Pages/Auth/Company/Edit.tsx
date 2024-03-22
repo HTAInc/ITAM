@@ -21,7 +21,7 @@ interface EditProps {
 }
 
 export default function Edit({company}: EditProps) {
-    const { data, setData, processing, errors } = useForm({
+    const { data, setData, put,processing, errors } = useForm({
         name: company.name,
     });
 
@@ -35,10 +35,7 @@ export default function Edit({company}: EditProps) {
             confirmButtonText:'Save',
         }).then((result) => {
             if (result.isConfirmed) {
-                router.post(route("auth.company.update", company.id), {
-                    _method: "PUT",
-                    ...data,
-                });
+                put(route("auth.company.update", company.id));
             }
         });
         
@@ -64,7 +61,7 @@ export default function Edit({company}: EditProps) {
                                     value={data.name}
                                     className="mt-1 block w-full"
                                     autoComplete="name"
-                                    placeholder="Depreciation Name"
+                                    placeholder="Company Name"
                                     onChange={(e) => setData('name', e.target.value)}
                                 />
 

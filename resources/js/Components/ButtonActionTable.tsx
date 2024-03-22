@@ -14,12 +14,12 @@ export default function ButtonActionTable({action,url,id,className,children}: Bu
     const handleAction = (action: 'delete' | 'edit') => {
         if(action ==='delete'){    
             Swal.fire({
-                text: 'Yakin Ingin Hapus?',
+                text: 'Delete?',
                 icon: 'warning',
                 showDenyButton: true,
                 showCancelButton: true,
                 showConfirmButton:false,
-                denyButtonText: 'Hapus',
+                denyButtonText: 'Yes, Delete',
             }).then((result) => {
                 if (result.isDenied) {
                     destroy(route(url,id))

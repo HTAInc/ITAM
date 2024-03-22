@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Department;
+use App\Models\UserLog;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -43,7 +44,14 @@ class DepartmentController extends Controller
             'code' => 'required|string',
         ]);
 
-        Department::create($data);
+        $department = Department::create($data);
+
+        UserLog::create([
+            'activity_type' => 'Created',
+            'description' => 'Created Department',
+            'data_id' => $department->id,
+            'data_type' => Department::class,
+        ]);
         return redirect()->route('auth.department.index')->with([
             'type' => 'success',
             'message' => 'Successfully Created'
@@ -83,6 +91,14 @@ class DepartmentController extends Controller
         ]);
 
         $department->update($data);
+
+        UserLog::create([
+            'activity_type' => 'Updated',
+            'description' => 'Updated Department',
+            'data_id' => $department->id,
+            'data_type' => Department::class,
+        ]);
+
         return redirect()->route('auth.department.index')->with([
             'type' => 'success',
             'message' => 'Successfully Updated'
@@ -95,6 +111,13 @@ class DepartmentController extends Controller
     public function destroy(Department $department)
     {
         $department->delete();
+        UserLog::create([
+            'activity_type' => 'Deleted',
+            'description' => 'Deleted Department',
+            'data_id' => $department->id,
+            'data_type' => Department::class,
+        ]);
+
         return redirect()->route('auth.department.index')->with([
             'type' => 'success',
             'message' => 'Successfully Deleted'

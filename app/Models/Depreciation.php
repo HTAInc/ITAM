@@ -14,15 +14,5 @@ class Depreciation extends Model
     protected $fillable = [
         'name',
         'months',
-        'user_id',
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($depreciation) {
-            $depreciation->user_id = Auth::id();
-        });
-    }
 }
